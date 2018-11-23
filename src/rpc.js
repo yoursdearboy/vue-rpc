@@ -19,5 +19,15 @@ export default (callServer, options) => {
         }
     }
 
-    return jayson(callServer, options)
+    const client = jayson(callServer, options)
+
+    return (...args) => {
+        return new Promise((resolve, reject) => {
+            client.request(...args, (err1, err2, res) => {
+                if (err1) return reject(err1)
+                if (err2) return reject(err2)
+                resolve(res)
+            })
+        })
+    }
 }
