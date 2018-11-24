@@ -17,8 +17,9 @@ export const Procedure = {
                 this.loading = false
                 return this.result
             } catch(err) {
-                this.error = null
+                this.error = err
                 this.loading = false
+                throw err
             }
         }
         return {
@@ -69,6 +70,7 @@ export const ProcedureCall = {
             this.error = null
         } catch(err) {
             this.error = err
+            throw err
         }
         this.loading = false
     }
