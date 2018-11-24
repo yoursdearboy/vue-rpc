@@ -33,12 +33,9 @@ export const Procedure = {
 export const ProcedureCall = {
     name: "ProcedureCall",
     props: {
-        method: {
-            type: String,
+        def: {
+            type: [Array, Object],
             required: true
-        },
-        params: {
-            type: null
         }
     },
     template: "<div><slot :loading='loading' :result='result' :error='error'></slot></div>",
@@ -50,9 +47,25 @@ export const ProcedureCall = {
         }
     },
     async beforeMount() {
-        this.loading = false
+        this.loading = true
         try {
-            this.result = await this.$rpc(this.method, this.params)
+            if (Array.isArray(this.def)) {
+                const [ method, params ] = this.def
+                this.result = await this.$rpc(method, params)
+            } else {
+                this.result = {}
+                const keys = Object.keys(this.def)
+                let result = keys.map(async key => {
+                    const [ method, params ] = this.def[key]
+                    const value = await this.$rpc(method, params)
+                    const res = {}
+                    res[key]= value
+                    return res
+                })
+                result = await Promise.all(result)
+                result = Object.assign({}, ...result)
+                this.result = result
+            }
             this.error = null
         } catch(err) {
             this.error = err
