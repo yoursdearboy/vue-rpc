@@ -7,7 +7,6 @@ export const Procedure = {
             required: true
         }
     },
-    template: "<div><slot :procedure='procedure' :loading='loading' :result='result' :error='error'></slot></div>",
     data() {
         const procedure = async params => {
             this.loading = true
@@ -28,6 +27,16 @@ export const Procedure = {
             result: null,
             error: null
         }
+    },
+    render(createElement) {
+        return createElement('div',[
+            this.$scopedSlots.default({
+                procedure: this.procedure,
+                loading: this.loading,
+                result: this.result,
+                error: this.error
+            })
+        ])
     }
 }
 
@@ -39,7 +48,6 @@ export const ProcedureCall = {
             required: true
         }
     },
-    template: "<div><slot :loading='loading' :result='result' :error='error'></slot></div>",
     data() {
         return {
             loading: null,
@@ -73,6 +81,15 @@ export const ProcedureCall = {
             throw err
         }
         this.loading = false
+    },
+    render(createElement) {
+        return createElement('div',[
+            this.$scopedSlots.default({
+                loading: this.loading,
+                result: this.result,
+                error: this.error
+            })
+        ])
     }
 }
 
